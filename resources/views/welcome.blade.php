@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Milele Food - Tasting Portal</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+        
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <style>
+            .brand-gradient {
+                background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+            }
+            .brand-gradient-light {
+                background: linear-gradient(135deg, #FFF5F0 0%, #FFFAF5 100%);
+            }
+        </style>
+    </head>
+    <body class="brand-gradient-light min-h-screen flex items-center justify-center p-6">
+        <div class="max-w-md w-full">
+            <!-- Header -->
+            <div class="text-center mb-16">
+                <!-- Milele Food Logo -->
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center">
+                        <!-- Simple SVG Logo for Milele Food -->
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="18" fill="#FF6B35"/>
+                            <path d="M12 16C12 12 16 10 20 10C24 10 28 12 28 16C28 20 24 24 20 28C16 24 12 20 12 16Z" fill="white"/>
+                            <circle cx="17" cy="16" r="2" fill="#FF6B35"/>
+                            <circle cx="23" cy="16" r="2" fill="#FF6B35"/>
+                            <path d="M16 22C16 22 18 24 20 24C22 24 24 22 24 22" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                    Milele Food Tasting Portal
+                </h1>
+            </div>
+
+            <!-- Login Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                        Login
+                    </h2>
+                </div>
+
+                <!-- Flash Messages -->
+                @if(session('error'))
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            {{ session('error') }}
+                        </div>
+                    </div>
+                @endif
+
+                @if(session('success'))
+                    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            {{ session('success') }}
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Login Form -->
+                <form action="{{ route('tasting.start') }}" method="POST" class="space-y-6">
+                    @csrf
+
+                    <!-- Email Input with @milele.com domain -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" 
+                                   name="email" 
+                                   id="email"
+                                   required
+                                   placeholder="username@milele.com"
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                   value="{{ old('email') }}"
+                                   pattern="[a-zA-Z0-9._%+-]+@milele\.com$"
+                                   title="Please use your @milele.com email address">
+                        </div>
+
+                        @error('email')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Hidden round_id field (default to first active round) -->
+                    @if($activeRounds->count() > 0)
+                        <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
+                    @else
+                        <!-- Show message when no active rounds exist -->
+                        <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <div>
+                                    <p class="font-medium">No Active Tasting Rounds</p>
+                                    <p class="text-sm">There are currently no active tasting rounds available. Please contact your administrator to set up a tasting round.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            class="w-full brand-gradient text-white py-4 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Access Tasting Portal
+                    </button>
+                </form>
+            </div>
+
+
+            <!-- Footer -->
+            <div class="text-center mt-16">
+                <p class="text-gray-500 text-sm">
+                    &copy; {{ date('Y') }} Milele Food. All rights reserved.
+                </p>
+                <p class="text-gray-400 text-xs mt-1">
+                    Internal Employee Portal - Authorized Access Only
+                </p>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Auto-hide flash messages after 5 seconds
+                setTimeout(function() {
+                    const alerts = document.querySelectorAll('.bg-red-50, .bg-green-50');
+                    alerts.forEach(alert => {
+                        alert.style.transition = 'opacity 0.5s ease';
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    });
+                }, 5000);
+
+                // Validate email domain on form submission
+                const form = document.querySelector('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const email = document.getElementById('email');
+                        const emailValue = email.value.trim().toLowerCase();
+                        
+                        // Check if email ends with @milele.com
+                        if (!emailValue.endsWith('@milele.com')) {
+                            e.preventDefault();
+                            email.classList.add('border-red-500');
+                            alert('Please use your @milele.com company email address.');
+                            return;
+                        }
+
+                        // Basic email validation
+                        if (!email.value) {
+                            e.preventDefault();
+                            email.classList.add('border-red-500');
+                            alert('Please enter your email address.');
+                        }
+                    });
+
+                    // Remove red border when user starts typing
+                    const emailInput = document.getElementById('email');
+                    emailInput.addEventListener('input', function() {
+                        this.classList.remove('border-red-500');
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
