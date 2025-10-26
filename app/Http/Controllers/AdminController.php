@@ -20,6 +20,15 @@ class AdminController extends Controller
         $totalReviews = Review::count();
         $totalParticipants = User::where('role', 'participant')->count();
         $completedSessions = TastingSession::where('status', 'completed')->count();
+        $totalSessions = TastingSession::count(); 
+        $activeRoundsCount = TastingRound::where('is_active', true)->count();
+
+        $activeRound = TastingRound::with(['roundSnacks', 'tastingSessions'])
+        ->where('is_active', true)
+        ->withCount(['tastingSessions as participant_count' => function($query) {
+            $query->select(DB::raw('count(distinct user_id)'));
+        }])
+        ->first();
 
         // Handle top snacks - only load if reviews exist
         $topSnacks = collect();
@@ -47,8 +56,8 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact(
             'activeRound', 'totalRounds', 'totalReviews', 
-            'totalParticipants', 'completedSessions', 'topSnacks', 
-            'recentReviews', 'roundStats'
+            'totalParticipants', 'completedSessions', 'totalSessions', 'activeRoundsCount',
+            'topSnacks', 'recentReviews', 'roundStats'
         ));
     }
 

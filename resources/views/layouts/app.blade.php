@@ -11,7 +11,7 @@
 <body class="bg-gray-50">
     <!-- Navigation -->
     <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="px-4 w-full">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
                     <a href="{{ url('/') }}" class="text-xl font-bold text-blue-600">
