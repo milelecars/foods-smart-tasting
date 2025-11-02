@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Snacks')
-
+@use('Illuminate\Support\Facades\Storage')
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
@@ -11,7 +11,7 @@
             <p class="text-gray-600">Manage snack products and their details</p>
         </div>
         <a href="{{ route('admin.snacks.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+           class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
             <i class="fas fa-plus mr-2"></i>Add Snack
         </a>
     </div>
@@ -42,7 +42,8 @@
                                 @if($snack->image_path)
                                     <img class="h-12 w-12 rounded-lg object-cover" 
                                          src="{{ Storage::url($snack->image_path) }}" 
-                                         alt="{{ $snack->name }}">
+                                         alt="{{ $snack->name }}"
+                                         onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\'%3E%3Crect width=\'48\' height=\'48\' fill=\'%23e5e7eb\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\' fill=\'%239ca3af\'%3E%3C/text%3E%3C/svg%3E'">
                                 @else
                                     <div class="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
                                         <i class="fas fa-cookie text-gray-400"></i>

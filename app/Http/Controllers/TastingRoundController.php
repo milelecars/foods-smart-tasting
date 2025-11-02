@@ -14,8 +14,8 @@ class TastingRoundController extends Controller
 {
     public function index()
     {
-        $rounds = TastingRound::with(['creator', 'sessions', 'snacks'])
-            ->withCount(['sessions as completed_sessions_count' => function($query) {
+        $rounds = TastingRound::with(['creator', 'tastingSessions', 'roundSnacks.snack'])
+            ->withCount(['tastingSessions as completed_sessions_count' => function($query) {
                 $query->where('status', 'completed');
             }])
             ->latest()
@@ -38,9 +38,9 @@ class TastingRoundController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
-            'snacks' => 'required|array|min:1',
-            'snacks.*.id' => 'required|exists:snacks,id',
-            'snacks.*.order' => 'required|integer|min:1'
+            'snack_ids' => 'required|array|min:1',
+            'snack_ids.*' => 'required|exists:snacks,id',
+            'snack_orders' => 'required|array',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -48,7 +48,7 @@ class TastingRoundController extends Controller
             $round = TastingRound::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'created_by' => auth()->id(),
+                'created_by' => 1, // Default admin user ID or use auth()->id() if authenticated
                 'is_active' => $request->boolean('is_active', false)
             ]);
 
@@ -57,13 +57,24 @@ class TastingRoundController extends Controller
                 $round->activate();
             }
 
-            // Add snacks with sequence
-            foreach ($request->snacks as $snackData) {
+            // Process snacks with their order
+            $snackIds = $request->snack_ids;
+            $snackOrders = $request->snack_orders;
+            $sequenceOrder = 1;
+
+            foreach ($snackIds as $snackId) {
+                // Get the order for this snack, or use sequence as fallback
+                $order = isset($snackOrders[$snackId]) && $snackOrders[$snackId] > 0 
+                    ? (int)$snackOrders[$snackId] 
+                    : $sequenceOrder;
+                
                 RoundSnack::create([
                     'tasting_round_id' => $round->id,
-                    'snack_id' => $snackData['id'],
-                    'sequence_order' => $snackData['order']
+                    'snack_id' => $snackId,
+                    'sequence_order' => $order
                 ]);
+                
+                $sequenceOrder++;
             }
         });
 
@@ -76,13 +87,13 @@ class TastingRoundController extends Controller
         $tastingRound->load([
             'creator',
             'roundSnacks.snack.category',
-            'sessions.user',
-            'sessions.reviews'
+            'tastingSessions.user',
+            'tastingSessions.reviews'
         ]);
 
         $stats = [
-            'total_participants' => $tastingRound->sessions->count(),
-            'completed_sessions' => $tastingRound->sessions->where('status', 'completed')->count(),
+            'total_participants' => $tastingRound->tastingSessions->count(),
+            'completed_sessions' => $tastingRound->tastingSessions->where('status', 'completed')->count(),
             'average_rating' => $tastingRound->reviews()->avg('overall_rating'),
             'total_reviews' => $tastingRound->reviews()->count()
         ];
@@ -144,7 +155,7 @@ class TastingRoundController extends Controller
     {
         DB::transaction(function () use ($tastingRound) {
             $tastingRound->roundSnacks()->delete();
-            $tastingRound->sessions()->each(function ($session) {
+            $tastingRound->tastingSessions()->each(function ($session) {
                 $session->reviews()->delete();
                 $session->delete();
             });

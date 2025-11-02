@@ -9,7 +9,17 @@ export default {
         './resources/views/**/*.blade.php',
     ],
     theme: {
-      extend: {},
+      extend: {
+        colors: {
+          'milele-orange': '#FF6B35',
+          'milele-blue': '#007BFF',
+          'milele-green': '#2F6A39',
+          'milele-red': '#DC3545',
+          'milele-yellow': '#FFC107',
+          'milele-purple': '#6F42C1',
+          'milele-gray': '#6C757D',
+        },
+      },
     },
     plugins: [],
 }

@@ -7,6 +7,9 @@ use App\Models\Snack;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;  // Add this
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class SnackController extends Controller
 {
@@ -19,7 +22,8 @@ class SnackController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.snacks.create', compact('categories'));
+        $countries = $this->getCountries();
+        return view('admin.snacks.create', compact('categories', 'countries'));
     }
 
     public function store(Request $request)
@@ -29,30 +33,103 @@ class SnackController extends Controller
             'brand' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
+            'ingredients' => 'nullable|string',
+            'origin' => 'nullable|string|max:255',
+            'shelf_life' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         $imagePath = null;
+        
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('snacks', 'public');
+            try {
+                $file = $request->file('image');
+                
+                // Ensure the directory exists
+                $directory = storage_path('app/public/snacks');
+                if (!\File::exists($directory)) {
+                    \File::makeDirectory($directory, 0755, true);
+                    \Log::info('Created directory: ' . $directory);
+                }
+                
+                // Check if directory is writable
+                if (!\File::isWritable($directory)) {
+                    \Log::error('Directory is not writable: ' . $directory);
+                    return back()->withInput()->with('error', 'Storage directory is not writable. Please check permissions.');
+                }
+                
+                // Store the file
+                $imagePath = $file->store('snacks', 'public');
+                
+                if (!$imagePath) {
+                    \Log::error('store() returned null or false');
+                    return back()->withInput()->with('error', 'Failed to store image. Please try again.');
+                }
+                
+                // Get the full path to verify
+                $fullPath = storage_path('app/public/' . $imagePath);
+                
+                // Verify the file was actually written
+                if (!file_exists($fullPath)) {
+                    \Log::error('File not found after storage. Expected: ' . $fullPath);
+                    return back()->withInput()->with('error', 'Image was uploaded but file was not saved. Please check storage permissions.');
+                }
+                
+                \Log::info('Image stored successfully', [
+                    'path' => $imagePath,
+                    'full_path' => $fullPath,
+                    'file_size' => filesize($fullPath),
+                    'is_readable' => is_readable($fullPath)
+                ]);
+                
+            } catch (\Exception $e) {
+                \Log::error('Image upload exception: ' . $e->getMessage(), [
+                    'trace' => $e->getTraceAsString()
+                ]);
+                return back()->withInput()->with('error', 'Error uploading image: ' . $e->getMessage());
+            }
         }
 
-        Snack::create([
-            'name' => $request->name,
-            'brand' => $request->brand,
-            'category_id' => $request->category_id,
-            'description' => $request->description,
-            'image_path' => $imagePath
-        ]);
+        try {
+            $snack = Snack::create([
+                'name' => $request->name,
+                'brand' => $request->brand,
+                'category_id' => $request->category_id,
+                'description' => $request->description,
+                'ingredients' => $request->ingredients,
+                'origin' => $request->origin,
+                'shelf_life' => $request->shelf_life,
+                'image_path' => $imagePath
+            ]);
+            
+            \Log::info('Snack created', [
+                'id' => $snack->id,
+                'name' => $snack->name,
+                'image_path' => $snack->image_path
+            ]);
 
-        return redirect()->route('admin.snacks.index')
-            ->with('success', 'Snack created successfully.');
+            return redirect()->route('admin.snacks.index')
+                ->with('success', 'Snack created successfully.');
+        } catch (\Exception $e) {
+            // If snack creation fails, delete the uploaded image if it exists
+            if ($imagePath) {
+                try {
+                    Storage::disk('public')->delete($imagePath);
+                } catch (\Exception $deleteException) {
+                    \Log::error('Failed to delete image after snack creation failure: ' . $deleteException->getMessage());
+                }
+            }
+            
+            \Log::error('Snack creation failed: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Failed to create snack: ' . $e->getMessage());
+        }
     }
 
     public function edit(Snack $snack)
     {
         $categories = Category::all();
-        return view('admin.snacks.edit', compact('snack', 'categories'));
+        $countries = $this->getCountries();
+        return view('admin.snacks.edit', compact('snack', 'categories', 'countries'));
     }
 
     public function update(Request $request, Snack $snack)
@@ -62,6 +139,9 @@ class SnackController extends Controller
             'brand' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
+            'ingredients' => 'nullable|string',
+            'origin' => 'nullable|string|max:255',
+            'shelf_life' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -79,6 +159,9 @@ class SnackController extends Controller
             'brand' => $request->brand,
             'category_id' => $request->category_id,
             'description' => $request->description,
+            'ingredients' => $request->ingredients,
+            'origin' => $request->origin,
+            'shelf_life' => $request->shelf_life,
             'image_path' => $imagePath
         ]);
 
@@ -118,5 +201,52 @@ class SnackController extends Controller
         ];
 
         return view('admin.snacks.show', compact('snack', 'stats'));
+    }
+
+    /**
+     * Get list of countries from API
+     */
+    private function getCountries()
+    {
+        // Cache countries for 24 hours to avoid API calls on every request
+        return Cache::remember('countries_list', 60 * 60 * 24, function () {
+            try {
+                $response = Http::timeout(5)->get('https://restcountries.com/v3.1/all?fields=name,cca2');
+                
+                if ($response->successful()) {
+                    $countries = $response->json();
+                    // Sort by country name
+                    usort($countries, function($a, $b) {
+                        return strcmp($a['name']['common'], $b['name']['common']);
+                    });
+                    return $countries;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Failed to fetch countries: ' . $e->getMessage());
+            }
+            
+            // Fallback to a basic list if API fails
+            return $this->getFallbackCountries();
+        });
+    }
+
+    /**
+     * Fallback countries list if API fails
+     */
+    private function getFallbackCountries()
+    {
+        return [
+            ['name' => ['common' => 'United States'], 'cca2' => 'US'],
+            ['name' => ['common' => 'United Kingdom'], 'cca2' => 'GB'],
+            ['name' => ['common' => 'Germany'], 'cca2' => 'DE'],
+            ['name' => ['common' => 'France'], 'cca2' => 'FR'],
+            ['name' => ['common' => 'Italy'], 'cca2' => 'IT'],
+            ['name' => ['common' => 'Spain'], 'cca2' => 'ES'],
+            ['name' => ['common' => 'Canada'], 'cca2' => 'CA'],
+            ['name' => ['common' => 'Australia'], 'cca2' => 'AU'],
+            ['name' => ['common' => 'Japan'], 'cca2' => 'JP'],
+            ['name' => ['common' => 'China'], 'cca2' => 'CN'],
+            // Add more as needed
+        ];
     }
 }

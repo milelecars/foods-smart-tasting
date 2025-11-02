@@ -9,7 +9,16 @@ class Snack extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'name', 'brand', 'description', 'image_path'];
+    protected $fillable = [
+        'category_id', 
+        'name', 
+        'brand', 
+        'description', 
+        'image_path',
+        'ingredients',    // Add this
+        'origin',         // Add this
+        'shelf_life'      // Add this
+    ];
 
     public function category()
     {

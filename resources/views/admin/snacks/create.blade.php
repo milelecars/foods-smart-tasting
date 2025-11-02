@@ -70,6 +70,53 @@
                     @enderror
                 </div>
 
+                <!-- Ingredients -->
+                <div>
+                    <label for="ingredients" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-list-ul mr-1"></i>Ingredients
+                    </label>
+                    <textarea name="ingredients" id="ingredients" rows="4" 
+                              class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('ingredients') border-red-300 @enderror"
+                              placeholder="List ingredients (e.g., Wheat flour, Sugar, Cocoa powder...)">{{ old('ingredients') }}</textarea>
+                    @error('ingredients')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1 text-sm text-gray-500">List all ingredients separated by commas or on new lines</p>
+                </div>
+
+                <!-- Origin -->
+                <div>
+                    <label for="origin" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-globe mr-1"></i>Origin
+                    </label>
+                    <select name="origin" id="origin" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('origin') border-red-300 @enderror">
+                        <option value="">Select a country (optional)</option>
+                        @foreach($countries as $country)
+                            <option value="{{ $country['name']['common'] }}" {{ old('origin') == $country['name']['common'] ? 'selected' : '' }}>
+                                {{ $country['name']['common'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('origin')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1 text-sm text-gray-500">Select the country of origin for this snack</p>
+                </div>
+
+                <!-- Shelf Life -->
+                <div>
+                    <label for="shelf_life" class="block text-sm font-medium text-gray-700">
+                        <i class="fas fa-clock mr-1"></i>Shelf Life
+                    </label>
+                    <input type="text" name="shelf_life" id="shelf_life" value="{{ old('shelf_life') }}"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('shelf_life') border-red-300 @enderror"
+                           placeholder="e.g., 6 months, 12 months, Best before: 12/2025">
+                    @error('shelf_life')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Image -->
                 <div>
                     <label for="image" class="block text-sm font-medium text-gray-700">Image</label>
@@ -89,7 +136,7 @@
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-milele-green hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-save mr-2"></i>Create Snack
                 </button>
             </div>

@@ -94,7 +94,7 @@
                                 <span class="text-sm text-gray-900">{{ $stats['completed_reviews'] }}/{{ $stats['total_snacks'] }}</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-600 h-2 rounded-full" 
+                                <div class="bg-milele-green h-2 rounded-full" 
                                      style="width: {{ $stats['progress_percentage'] }}%"></div>
                             </div>
                             @if($stats['average_rating'])

@@ -174,7 +174,7 @@
                             </div>
                             <div class="flex space-x-3 pt-4 border-t border-gray-200">
                                 <a href="{{ route('admin.tasting-rounds.show', $activeRound->id) }}" 
-                                    class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
                                     <i class="fas fa-eye mr-2"></i> View Details
                                 </a>
                                 <a href="{{ route('admin.tasting-rounds.results', $activeRound->id) }}" 
@@ -198,7 +198,7 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-2">Ready to Start?</h3>
                             <p class="text-gray-600 mb-4">Create a tasting round to begin collecting feedback from participants.</p>
                             <a href="{{ route('admin.tasting-rounds.create') }}" 
-                                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                class="inline-flex items-center px-6 py-3 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
                                 <i class="fas fa-plus mr-2"></i> Create Tasting Round
                             </a>
                         </div>

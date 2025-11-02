@@ -12,7 +12,7 @@
         </div>
         <div class="flex space-x-3">
             <a href="{{ route('admin.snacks.edit', $snack) }}" 
-               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
                 <i class="fas fa-edit mr-2"></i>Edit Snack
             </a>
             <a href="{{ route('admin.snacks.index') }}" 
@@ -69,6 +69,30 @@
                             <dt class="text-sm font-medium text-gray-500">Description</dt>
                             <dd class="mt-1 text-sm text-gray-900">
                                 {{ $snack->description ?: 'No description provided' }}
+                            </dd>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-medium text-gray-500">
+                                <i class="fas fa-list-ul mr-1"></i>Ingredients
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $snack->ingredients ?: 'No ingredients listed' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">
+                                <i class="fas fa-globe mr-1"></i>Origin
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $snack->origin ?: 'Not specified' }}
+                            </dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>Shelf Life
+                            </dt>
+                            <dd class="mt-1 text-sm text-gray-900">
+                                {{ $snack->shelf_life ?: 'Not specified' }}
                             </dd>
                         </div>
                     </dl>

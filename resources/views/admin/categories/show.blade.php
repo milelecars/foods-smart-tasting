@@ -12,7 +12,7 @@
         </div>
         <div class="flex space-x-3">
             <a href="{{ route('admin.categories.edit', $category) }}" 
-               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
                 <i class="fas fa-edit mr-2"></i>Edit Category
             </a>
             <a href="{{ route('admin.categories.index') }}" 

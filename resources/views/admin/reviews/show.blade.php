@@ -203,7 +203,7 @@
             </div>
             <div class="flex space-x-3">
                 <a href="{{ route('admin.snacks.show', $review->snack) }}" 
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                   class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
                     <i class="fas fa-cookie mr-2"></i>View Snack
                 </a>
                 <a href="{{ route('admin.sessions.show', $review->session) }}" 

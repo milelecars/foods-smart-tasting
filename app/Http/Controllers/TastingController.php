@@ -50,10 +50,25 @@ class TastingController extends Controller
                 ->latest()
                 ->get();
 
-            // Get active rounds - don't load snacks relationship yet since there are no snacks
+            // Get active rounds
             $activeRounds = TastingRound::where('is_active', true)
-                ->with(['creator'])
+                ->with(['creator', 'roundSnacks'])
                 ->get();
+
+            // Get rounds the user has already completed
+            $completedRoundIds = TastingSession::where('user_id', $user->id)
+                ->where('status', 'completed')
+                ->pluck('tasting_round_id')
+                ->toArray();
+
+            // Separate rounds into available and completed
+            $availableRounds = $activeRounds->filter(function($round) use ($completedRoundIds) {
+                return !in_array($round->id, $completedRoundIds);
+            });
+
+            $completedRounds = $activeRounds->filter(function($round) use ($completedRoundIds) {
+                return in_array($round->id, $completedRoundIds);
+            });
 
             // Calculate stats
             $stats = [
@@ -66,7 +81,7 @@ class TastingController extends Controller
                 'average_rating' => $sessions->flatMap->reviews->avg('overall_rating')
             ];
 
-            return view('participants.dashboard', compact('user', 'sessions', 'activeRounds', 'stats'));
+            return view('participants.dashboard', compact('user', 'sessions', 'availableRounds', 'completedRounds', 'stats'));
             
         } catch (\Exception $e) {
             // Log the error and redirect with a generic message

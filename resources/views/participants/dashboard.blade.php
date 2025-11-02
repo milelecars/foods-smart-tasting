@@ -3,7 +3,7 @@
 @section('title', 'My Dashboard')
 
 @section('content')
-<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+<div class=" max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
     <div class="space-y-6">
         <!-- Welcome Header -->
         <div class="bg-white rounded-lg shadow p-6">
@@ -68,15 +68,15 @@
             </div>
         </div>
 
-        <!-- Active Rounds Section -->
+        <!-- Available Rounds Section -->
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-bold text-gray-900 mb-4">
-                <i class="fas fa-list-ol mr-2"></i>Active Tasting Rounds
+                <i class="fas fa-list-ol mr-2"></i>Available Tasting Rounds
             </h2>
             
-            @if($activeRounds->count() > 0)
+            @if(isset($availableRounds) && $availableRounds->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    @foreach($activeRounds as $round)
+                    @foreach($availableRounds as $round)
                         <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <h3 class="font-semibold text-gray-900 mb-2">{{ $round->name }}</h3>
                             <p class="text-sm text-gray-600 mb-3">{{ Str::limit($round->description, 100) }}</p>
@@ -100,30 +100,40 @@
             @else
                 <div class="text-center py-8">
                     <i class="fas fa-info-circle text-gray-400 text-4xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Active Tasting Rounds</h3>
-                    <p class="text-gray-600 mb-4">There are currently no active tasting rounds available.</p>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Available Tasting Rounds</h3>
+                    <p class="text-gray-600 mb-4">There are currently no active tasting rounds available for you.</p>
                     <p class="text-sm text-gray-500">Check back later or contact your administrator to set up a new tasting round.</p>
                 </div>
             @endif
         </div>
 
-        <!-- Session History Section -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">
-                <i class="fas fa-history mr-2"></i>Your Tasting History
-            </h2>
-            
-            @if($sessions->count() > 0)
-                <!-- Sessions table here -->
-            @else
-                <div class="text-center py-8">
-                    <i class="fas fa-clipboard-list text-gray-400 text-4xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Tasting Sessions Yet</h3>
-                    <p class="text-gray-600 mb-4">You haven't participated in any tasting sessions yet.</p>
-                    <p class="text-sm text-gray-500">Start your first tasting session when a round becomes available!</p>
+        <!-- Completed Rounds Section -->
+        @if(isset($completedRounds) && $completedRounds->count() > 0)
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-check-circle mr-2"></i>Completed Tasting Rounds
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($completedRounds as $round)
+                        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50 opacity-75">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-semibold text-gray-900">{{ $round->name }}</h3>
+                                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded">
+                                    <i class="fas fa-check mr-1"></i>Completed
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">{{ Str::limit($round->description, 100) }}</p>
+                            
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span><i class="fas fa-user mr-1"></i> {{ $round->creator->name ?? 'Unknown' }}</span>
+                                <span><i class="fas fa-cookie mr-1"></i> {{ $round->roundSnacks->count() }} snacks</span>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            @endif
-        </div>
+            </div>
+        @endif
 
     </div>
 </div>

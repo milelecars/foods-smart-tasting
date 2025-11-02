@@ -3,15 +3,15 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Milele Food - Tasting Portal</title>
+        <title>Milele Foods Smart Portal</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
         
         <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+                
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -30,20 +30,13 @@
             <div class="text-center mb-16">
                 <!-- Milele Food Logo -->
                 <div class="flex justify-center mb-6">
-                    <div class="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center">
-                        <!-- Simple SVG Logo for Milele Food -->
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="18" fill="#FF6B35"/>
-                            <path d="M12 16C12 12 16 10 20 10C24 10 28 12 28 16C28 20 24 24 20 28C16 24 12 20 12 16Z" fill="white"/>
-                            <circle cx="17" cy="16" r="2" fill="#FF6B35"/>
-                            <circle cx="23" cy="16" r="2" fill="#FF6B35"/>
-                            <path d="M16 22C16 22 18 24 20 24C22 24 24 22 24 22" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
+                    <div class="w-60 h-40 flex items-center justify-center">
+                        <img src="{{ asset('images/logo.png') }}" alt="Milele Foods Logo" class="w-full h-full object-contain">
                     </div>
                 </div>
                 
                 <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                    Milele Food Tasting Portal
+                    Milele Foods Smart Portal
                 </h1>
             </div>
 
@@ -107,7 +100,7 @@
                     @if($activeRounds->count() > 0)
                         <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
                     @else
-                        <!-- Show message when no active rounds exist -->
+                        <!-- Show message when no active rounds exist
                         <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-6">
                             <div class="flex items-center">
                                 <i class="fas fa-info-circle mr-2"></i>
@@ -116,7 +109,7 @@
                                     <p class="text-sm">There are currently no active tasting rounds available. Please contact your administrator to set up a tasting round.</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     @endif
 
                     <!-- Submit Button -->

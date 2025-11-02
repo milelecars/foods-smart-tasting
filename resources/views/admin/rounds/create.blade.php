@@ -73,13 +73,13 @@
 
                     <!-- Snacks Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                        @foreach($snacks as $snack)
+                        @foreach($snacks as $index => $snack)
                         <div class="snack-item border border-gray-200 rounded-lg p-3 hover:bg-gray-50" 
                              data-category="{{ $snack->category_id }}">
                             <div class="flex items-start space-x-3">
-                                <input type="checkbox" name="snacks[{{ $snack->id }}][id]" 
+                                <input type="checkbox" name="snack_ids[]" 
                                        value="{{ $snack->id }}" id="snack_{{ $snack->id }}"
-                                       class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                       class="snack-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                 <div class="flex-1">
                                     <label for="snack_{{ $snack->id }}" class="text-sm font-medium text-gray-900 cursor-pointer">
                                         {{ $snack->name }}
@@ -90,9 +90,10 @@
                             </div>
                             <div class="mt-2">
                                 <label class="block text-xs text-gray-500">Order:</label>
-                                <input type="number" name="snacks[{{ $snack->id }}][order]" 
+                                <input type="number" name="snack_orders[{{ $snack->id }}]" 
                                        min="1" value="{{ $loop->iteration }}"
-                                       class="mt-1 block w-full text-xs border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                       class="snack-order mt-1 block w-full text-xs border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                       disabled>
                             </div>
                         </div>
                         @endforeach
@@ -100,6 +101,9 @@
                     @error('snacks')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
+                    <div id="snacks-error" class="mt-1 text-sm text-red-600" style="display: none;">
+                        Please select at least one snack for this round.
+                    </div>
                 </div>
             </div>
 
@@ -110,7 +114,7 @@
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-milele-green hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-save mr-2"></i>Create Round
                 </button>
             </div>
@@ -122,7 +126,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     const categoryFilter = document.getElementById('category-filter');
     const snackItems = document.querySelectorAll('.snack-item');
+    const snackCheckboxes = document.querySelectorAll('.snack-checkbox');
+    const snackOrders = document.querySelectorAll('.snack-order');
+    const form = document.querySelector('form');
+    const snacksError = document.getElementById('snacks-error');
 
+    // Enable/disable order inputs based on checkbox state
+    snackCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const snackItem = this.closest('.snack-item');
+            const orderInput = snackItem.querySelector('.snack-order');
+            orderInput.disabled = !this.checked;
+        });
+    });
+
+    // Category filter
     categoryFilter.addEventListener('change', function() {
         const selectedCategory = this.value;
         
@@ -133,6 +151,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.style.display = 'none';
             }
         });
+    });
+
+    // Form validation before submit
+    form.addEventListener('submit', function(e) {
+        const checkedBoxes = document.querySelectorAll('.snack-checkbox:checked');
+        
+        if (checkedBoxes.length === 0) {
+            e.preventDefault();
+            snacksError.style.display = 'block';
+            return false;
+        }
+        
+        snacksError.style.display = 'none';
     });
 });
 </script>

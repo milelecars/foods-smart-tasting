@@ -11,7 +11,7 @@
             <p class="text-gray-600">Manage tasting sessions and rounds</p>
         </div>
         <a href="{{ route('admin.tasting-rounds.create') }}" 
-           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+           class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
             <i class="fas fa-plus mr-2"></i>Create Round
         </a>
     </div>

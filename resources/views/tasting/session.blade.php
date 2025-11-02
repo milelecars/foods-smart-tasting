@@ -16,7 +16,7 @@
                 </span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-3">
-                <div class="bg-blue-600 h-3 rounded-full transition-all duration-300" 
+                <div class="bg-milele-green h-3 rounded-full transition-all duration-300" 
                      style="width: {{ $progress['percentage'] }}%"></div>
             </div>
         </div>
@@ -126,7 +126,7 @@
 
                     <div class="mt-8">
                         <button type="submit" 
-                                class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                class="w-full bg-milele-green text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Submit Review & Continue
                         </button>
                     </div>
@@ -138,21 +138,39 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add interactive rating selection
-    document.querySelectorAll('.rating-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const radio = this.previousElementSibling;
-            radio.checked = true;
+    // Handle each rating type separately (taste_rating, texture_rating, etc.)
+    const ratingGroups = ['taste_rating', 'texture_rating', 'appearance_rating', 'overall_rating'];
+    
+    ratingGroups.forEach(groupName => {
+        const radios = document.querySelectorAll(`input[type="radio"][name="${groupName}"]`);
+        
+        radios.forEach(radio => {
+            const label = radio.closest('label');
+            const ratingOption = label.querySelector('.rating-option');
             
-            // Remove selected styles from all options in this group
-            this.closest('div').querySelectorAll('.rating-option').forEach(opt => {
-                opt.classList.remove('border-blue-500', 'bg-blue-50', 'text-blue-700');
-                opt.classList.add('border-gray-300', 'text-gray-600');
+            // When radio changes
+            radio.addEventListener('change', function() {
+                // Reset all options in this group
+                radios.forEach(r => {
+                    const rLabel = r.closest('label');
+                    const rOption = rLabel.querySelector('.rating-option');
+                    rOption.classList.remove('border-blue-500', 'bg-blue-50', 'text-blue-700');
+                    rOption.classList.add('border-gray-300', 'text-gray-600');
+                });
+                
+                // Highlight the selected one
+                if (this.checked) {
+                    ratingOption.classList.remove('border-gray-300', 'text-gray-600');
+                    ratingOption.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-700');
+                }
             });
             
-            // Add selected styles to clicked option
-            this.classList.remove('border-gray-300', 'text-gray-600');
-            this.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-700');
+            // Make the div clickable to select the radio
+            ratingOption.addEventListener('click', function(e) {
+                e.preventDefault();
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+            });
         });
     });
 });

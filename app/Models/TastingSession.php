@@ -28,12 +28,12 @@ class TastingSession extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'session_id');  // Specify the foreign key
     }
 
     public function completedReviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'session_id');  // Specify the foreign key
     }
 
     public function getProgressAttribute()
@@ -50,8 +50,16 @@ class TastingSession extends Model
 
     public function complete()
     {
+        $completedAt = now();
+        
+        // Ensure completed_at is always after started_at
+        if ($this->started_at && $completedAt->lt($this->started_at)) {
+            // If for some reason now() is before started_at, use started_at + 1 minute
+            $completedAt = $this->started_at->copy()->addMinute();
+        }
+        
         $this->update([
-            'completed_at' => now(),
+            'completed_at' => $completedAt,
             'status' => 'completed'
         ]);
     }
