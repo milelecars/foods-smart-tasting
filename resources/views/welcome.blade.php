@@ -24,114 +24,157 @@
             }
         </style>
     </head>
-    <body class="brand-gradient-light min-h-screen flex items-center justify-center p-6">
-        <div class="max-w-md w-full">
-            <!-- Header -->
-            <div class="text-center mb-16">
-                <!-- Milele Food Logo -->
-                <div class="flex justify-center mb-6">
-                    <div class="w-60 h-40 flex items-center justify-center">
-                        <img src="{{ asset('images/logo.png') }}" alt="Milele Foods Logo" class="w-full h-full object-contain">
+    <body class="brand-gradient-light min-h-screen flex items-center justify-center">
+        <main class="flex-1 flex items-center justify-center min-h-screen">
+            <div class="max-w-md w-full px-4 py-8 flex flex-col items-center justify-center space-y-8">
+                <!-- Header -->
+                <div class="text-center">
+                    <!-- Milele Food Logo -->
+                    <div class="flex justify-center">
+                        <div class="w-60 h-40 flex items-center justify-center">
+                            <img src="{{ asset('images/logo.png') }}" alt="Milele Foods Logo" class="w-full h-full object-contain">
+                        </div>
                     </div>
+
                 </div>
                 
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                    Milele Foods Smart Portal
-                </h1>
-            </div>
-
-            <!-- Login Card -->
-            <div class="bg-white rounded-2xl shadow-xl p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                        Login
-                    </h2>
-                </div>
-
-                <!-- Flash Messages -->
-                @if(session('error'))
-                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-circle mr-2"></i>
-                            {{ session('error') }}
-                        </div>
-                    </div>
-                @endif
-
-                @if(session('success'))
-                    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle mr-2"></i>
-                            {{ session('success') }}
-                        </div>
-                    </div>
-                @endif
-
-                <!-- Login Form -->
-                <form action="{{ route('tasting.start') }}" method="POST" class="space-y-6">
-                    @csrf
-
-                    <!-- Email Input with @milele.com domain -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                            Email
-                        </label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-envelope text-gray-400"></i>
-                            </div>
-                            <input type="email" 
-                                   name="email" 
-                                   id="email"
-                                   required
-                                   placeholder="username@milele.com"
-                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
-                                   value="{{ old('email') }}"
-                                   pattern="[a-zA-Z0-9._%+-]+@milele\.com$"
-                                   title="Please use your @milele.com email address">
-                        </div>
-
-                        @error('email')
-                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                        @enderror
+                <!-- Login Card -->
+                <div class="bg-white rounded-2xl shadow-xl py-8 px-12">
+                    <div class="text-center mb-3">
+                        <h1 class="text-xl font-bold text-gray-900 mb-8">
+                            Milele Foods Smart Portal
+                        </h1>
                     </div>
 
-                    <!-- Hidden round_id field (default to first active round) -->
-                    @if($activeRounds->count() > 0)
-                        <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
-                    @else
-                        <!-- Show message when no active rounds exist
-                        <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-6">
+                    <!-- Flash Messages -->
+                    @if(session('error'))
+                        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
                             <div class="flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                <div>
-                                    <p class="font-medium">No Active Tasting Rounds</p>
-                                    <p class="text-sm">There are currently no active tasting rounds available. Please contact your administrator to set up a tasting round.</p>
-                                </div>
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                {{ session('error') }}
                             </div>
-                        </div> -->
+                        </div>
                     @endif
 
-                    <!-- Submit Button -->
-                    <button type="submit" 
-                            class="w-full brand-gradient text-white py-4 px-6 rounded-lg font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
-                        Access Tasting Portal
-                    </button>
-                </form>
-            </div>
+                    @if(session('success'))
+                        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                {{ session('success') }}
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Login Form -->
+                    <form action="{{ route('tasting.start') }}" method="POST" class="space-y-6">
+                        @csrf
+
+                        <!-- Email Input with @milele.com domain -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input type="email" 
+                                    name="email" 
+                                    id="email"
+                                    required
+                                    placeholder="username@milele.com"
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
+                                    value="{{ old('email') }}"
+                                    pattern="[a-zA-Z0-9._%+-]+@milele\.com$"
+                                    title="Please use your @milele.com email address">
+                            </div>
+
+                            @error('email')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Hidden round_id field (default to first active round) -->
+                        @if($activeRounds->count() > 0)
+                            <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
+                        @else
+                            <!-- Show message when no active rounds exist
+                            <div class="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded-lg mb-6">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    <div>
+                                        <p class="font-medium">No Active Tasting Rounds</p>
+                                        <p class="text-sm">There are currently no active tasting rounds available. Please contact your administrator to set up a tasting round.</p>
+                                    </div>
+                                </div>
+                            </div> -->
+                        @endif
+
+                        <!-- Optional explicit role, used when prompting -->
+                        <input type="hidden" name="role" id="chosen_role" value="">
+
+                        <!-- Submit Button -->
+                        <button type="submit" 
+                                class="w-full bg-milele-green hover:bg-milele-green hover:opacity-95 text-sm text-white py-3 px-6 rounded-lg font-semibold">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Access Tasting Portal
+                        </button>
+                    </form>
+                </div>
 
 
-            <!-- Footer -->
-            <div class="text-center mt-16">
-                <p class="text-gray-500 text-sm">
-                    &copy; {{ date('Y') }} Milele Food. All rights reserved.
-                </p>
-                <p class="text-gray-400 text-xs mt-1">
-                    Internal Employee Portal - Authorized Access Only
-                </p>
+                <!-- Footer -->
+                <div class="flex flex-col items-center justify-end">
+                    <footer class="mt-auto text-center py-6">
+                        <p class="text-gray-500 text-sm">
+                            &copy; {{ date('Y') }} Milele Food. All rights reserved.
+                        </p>
+                        <p class="text-gray-400 text-xs mt-1">
+                            Internal Employee Portal - Authorized Access Only
+                        </p>
+                    </footer>
+                </div>
             </div>
-        </div>
+        </main>
+
+        <!-- Role Selection Modal -->
+        @if(session('role_selection_required'))
+            <div id="roleModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Choose your role</h3>
+                    <p class="text-gray-600 mb-6">Your account has both Admin and Participant roles. Continue as:</p>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <form method="POST" action="{{ route('tasting.start') }}">
+                            @csrf
+                            <input type="hidden" name="role" value="admin">
+                            @if(session('user_email'))
+                                <input type="hidden" name="email" value="{{ session('user_email') }}">
+                            @endif
+                            @if(isset($activeRounds) && $activeRounds->count() > 0)
+                                <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
+                            @endif
+                            <button type="submit" class="w-full brand-gradient text-white py-3 rounded-lg font-semibold">Admin</button>
+                        </form>
+
+                        <form method="POST" action="{{ route('tasting.start') }}">
+                            @csrf
+                            <input type="hidden" name="role" value="participant">
+                            @if(session('user_email'))
+                                <input type="hidden" name="email" value="{{ session('user_email') }}">
+                            @endif
+                            @if(isset($activeRounds) && $activeRounds->count() > 0)
+                                <input type="hidden" name="round_id" value="{{ $activeRounds->first()->id }}">
+                            @endif
+                            <button type="submit" class="w-full bg-gray-900 text-white py-3 rounded-lg font-semibold">Participant</button>
+                        </form>
+                    </div>
+
+                    <button onclick="document.getElementById('roleModal').remove()" class="mt-10 w-full text-center text-gray-500 hover:text-gray-700 text-sm">Cancel</button>
+                </div>
+            </div>
+        @endif
+
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {

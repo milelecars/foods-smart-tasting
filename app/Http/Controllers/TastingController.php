@@ -238,7 +238,7 @@ class TastingController extends Controller
         $session = TastingSession::findOrFail($sessionId);
 
         // Check if review already exists for this snack in this session
-        $existingReview = Review::where('session_id', $session->id)
+        $existingReview = Review::where('tasting_session_id', $session->id)
             ->where('snack_id', $request->snack_id)
             ->first();
 
@@ -247,7 +247,7 @@ class TastingController extends Controller
         }
 
         Review::create([
-            'session_id' => $session->id,
+            'tasting_session_id' => $session->id,
             'snack_id' => $request->snack_id,
             'taste_rating' => $request->taste_rating,
             'texture_rating' => $request->texture_rating,

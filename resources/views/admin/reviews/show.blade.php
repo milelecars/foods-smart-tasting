@@ -3,7 +3,7 @@
 @section('title', 'Review Details')
 
 @section('content')
-<div class="space-y-6">
+<div class="p-20 space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -26,7 +26,7 @@
         <div class="p-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Left Column -->
-                <div class="space-y-6">
+                <div class="p-20 space-y-6">
                     <div>
                         <h4 class="text-lg font-medium text-gray-900 mb-4">Snack Details</h4>
                         <div class="flex items-start space-x-4">
@@ -89,7 +89,7 @@
                 </div>
 
                 <!-- Right Column -->
-                <div class="space-y-6">
+                <div class="p-20 space-y-6">
                     <div>
                         <h4 class="text-lg font-medium text-gray-900 mb-4">Ratings</h4>
                         <div class="space-y-4">
@@ -203,7 +203,7 @@
             </div>
             <div class="flex space-x-3">
                 <a href="{{ route('admin.snacks.show', $review->snack) }}" 
-                   class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
+                   class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-milele-green hover:opacity-95 transition-colors">
                     <i class="fas fa-cookie mr-2"></i>View Snack
                 </a>
                 <a href="{{ route('admin.sessions.show', $review->session) }}" 

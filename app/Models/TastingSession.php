@@ -28,12 +28,12 @@ class TastingSession extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'session_id');  // Specify the foreign key
+        return $this->hasMany(Review::class, 'tasting_session_id');  // Specify the foreign key
     }
 
     public function completedReviews()
     {
-        return $this->hasMany(Review::class, 'session_id');  // Specify the foreign key
+        return $this->hasMany(Review::class, 'tasting_session_id');  // Specify the foreign key
     }
 
     public function getProgressAttribute()

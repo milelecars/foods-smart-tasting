@@ -3,7 +3,7 @@
 @section('title', 'Snack Details')
 
 @section('content')
-<div class="space-y-6">
+<div class="p-20 space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -12,7 +12,7 @@
         </div>
         <div class="flex space-x-3">
             <a href="{{ route('admin.snacks.edit', $snack) }}" 
-               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-milele-green hover:opacity-95 transition-colors">
                 <i class="fas fa-edit mr-2"></i>Edit Snack
             </a>
             <a href="{{ route('admin.snacks.index') }}" 

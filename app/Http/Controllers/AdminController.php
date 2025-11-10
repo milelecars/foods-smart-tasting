@@ -42,13 +42,11 @@ class AdminController extends Controller
         }
 
         // Handle recent reviews - only load if reviews exist
-        $recentReviews = collect();
-        if ($totalReviews > 0) {
-            $recentReviews = Review::with(['snack', 'session.user'])
-                ->latest()
-                ->limit(10)
-                ->get();
-        }
+        $recentReviews = Review::with(['snack', 'tastingSession.user'])
+            ->whereHas('tastingSession.user') // Only get reviews that have a session with a user
+            ->latest()
+            ->take(4)
+            ->get();
 
         $roundStats = TastingRound::withCount(['tastingSessions as completed_sessions' => function($query) {
             $query->where('status', 'completed');

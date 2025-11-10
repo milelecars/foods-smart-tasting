@@ -10,7 +10,7 @@ class Review extends Model
     use HasFactory;
 
     protected $fillable = [
-        'session_id', 'snack_id', 'taste_rating', 'texture_rating',
+        'tasting_session_id', 'snack_id', 'taste_rating', 'texture_rating',
         'appearance_rating', 'overall_rating', 'comment'
     ];
 
@@ -21,9 +21,9 @@ class Review extends Model
         'overall_rating' => 'integer',
     ];
 
-    public function session()
+    public function tastingSession()
     {
-        return $this->belongsTo(TastingSession::class, 'session_id');
+        return $this->belongsTo(TastingSession::class, 'tasting_session_id');
     }
 
     public function snack()

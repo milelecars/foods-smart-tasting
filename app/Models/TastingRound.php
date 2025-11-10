@@ -39,17 +39,24 @@ class TastingRound extends Model
     
     public function reviews()
     {
-        return $this->hasManyThrough(Review::class, TastingSession::class);
+        return $this->hasManyThrough(
+            Review::class,
+            TastingSession::class,
+            'tasting_round_id', 
+            'tasting_session_id',     
+            'id',                
+            'id'                 
+        );
     }
 
     public function getParticipantCountAttribute()
     {
-        return $this->tastingSessions()->where('status', 'completed')->count();
+        return $this->tastingSessions()->where('status', 'completed')->count() ?? 0;
     }
 
     public function getAverageRatingAttribute()
     {
-        return $this->reviews()->avg('overall_rating');
+        return $this->reviews()->avg('overall_rating') ?? 0;
     }
 
     public function activate()

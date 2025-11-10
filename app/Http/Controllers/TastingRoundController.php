@@ -39,8 +39,8 @@ class TastingRoundController extends Controller
             'description' => 'nullable|string',
             'is_active' => 'boolean',
             'snack_ids' => 'required|array|min:1',
-            'snack_ids.*' => 'required|exists:snacks,id',
-            'snack_orders' => 'required|array',
+            'snack_ids.*' => 'exists:snacks,id',
+            // Remove 'snack_orders' validation since we no longer have that field
         ]);
 
         DB::transaction(function () use ($request) {
@@ -48,7 +48,7 @@ class TastingRoundController extends Controller
             $round = TastingRound::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'created_by' => 1, // Default admin user ID or use auth()->id() if authenticated
+                'created_by' => 1,
                 'is_active' => $request->boolean('is_active', false)
             ]);
 
@@ -57,24 +57,14 @@ class TastingRoundController extends Controller
                 $round->activate();
             }
 
-            // Process snacks with their order
-            $snackIds = $request->snack_ids;
-            $snackOrders = $request->snack_orders;
+            // Process snacks with auto-incrementing sequence order
             $sequenceOrder = 1;
-
-            foreach ($snackIds as $snackId) {
-                // Get the order for this snack, or use sequence as fallback
-                $order = isset($snackOrders[$snackId]) && $snackOrders[$snackId] > 0 
-                    ? (int)$snackOrders[$snackId] 
-                    : $sequenceOrder;
-                
+            foreach ($request->snack_ids as $snackId) {
                 RoundSnack::create([
                     'tasting_round_id' => $round->id,
                     'snack_id' => $snackId,
-                    'sequence_order' => $order
+                    'sequence_order' => $sequenceOrder++
                 ]);
-                
-                $sequenceOrder++;
             }
         });
 

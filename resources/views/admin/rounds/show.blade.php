@@ -3,7 +3,7 @@
 @section('title', 'Tasting Round Details')
 
 @section('content')
-<div class="space-y-6">
+<div class="p-20 space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -22,7 +22,7 @@
                 </form>
             @endif
             <a href="{{ route('admin.tasting-rounds.edit', $tastingRound) }}" 
-               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-blue-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 bg-milele-green text-white rounded-lg hover:bg-milele-green hover:opacity-95 transition-colors">
                 <i class="fas fa-edit mr-2"></i>Edit Round
             </a>
             <a href="{{ route('admin.tasting-rounds.results', $tastingRound) }}" 
@@ -54,11 +54,11 @@
                             <dd class="mt-1">
                                 @if($tastingRound->is_active)
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                        <i class="fas fa-play mr-1"></i>Active
+                                        Active
                                     </span>
                                 @else
                                     <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                        <i class="fas fa-pause mr-1"></i>Inactive
+                                        Inactive
                                     </span>
                                 @endif
                             </dd>

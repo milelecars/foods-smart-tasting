@@ -8,11 +8,26 @@ use App\Http\Controllers\SnackController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SessionController;
 
+
 // Public routes
 Route::get('/', [TastingController::class, 'welcome'])->name('welcome');
 
 // Participants dashboard
 Route::get('/dashboard', [TastingController::class, 'participantsDashboard'])->name('participants.dashboard');
+
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $path = storage_path('app/public/' . $folder . '/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    $mimeType = mime_content_type($path);
+    
+    return response()->file($path, [
+        'Content-Type' => $mimeType,
+    ]);
+})->where('filename', '.*');
 
 // Tasting session routes
 Route::prefix('tasting')->group(function () {
@@ -36,8 +51,12 @@ Route::prefix('admin')->group(function () {
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('snacks', SnackController::class)->names('admin.snacks');
     Route::resource('tasting-rounds', TastingRoundController::class)->names('admin.tasting-rounds');
-    Route::resource('reviews', ReviewController::class)->names('admin.reviews');
-    Route::resource('sessions', SessionController::class)->names('admin.sessions');
+    Route::resource('reviews', ReviewController::class)
+        ->only(['index', 'show', 'destroy'])
+        ->names('admin.reviews');
+    Route::resource('sessions', SessionController::class)
+        ->only(['index', 'show', 'destroy'])
+        ->names('admin.sessions');
     
     // Additional routes
     Route::post('/tasting-rounds/{tastingRound}/activate', [TastingRoundController::class, 'activate'])->name('admin.tasting-rounds.activate');
