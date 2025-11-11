@@ -53,7 +53,7 @@
                     <input type="hidden" name="snack_id" value="{{ $currentSnack->snack_id }}">
 
                     <!-- Rating Fields -->
-                    <div class="space-y-6">
+                    <div class="p-20 space-y-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-3">Taste Rating</label>
                             <div class="flex space-x-2">
@@ -126,7 +126,7 @@
 
                     <div class="mt-8">
                         <button type="submit" 
-                                class="w-full bg-milele-green text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                                class="w-full bg-milele-green text-white py-3 px-4 rounded-lg font-medium hover:bg-milele-green hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             Submit Review & Continue
                         </button>
                     </div>

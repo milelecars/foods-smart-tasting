@@ -10,11 +10,21 @@ use App\Models\Snack;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request) 
     {
+        if (!$request->session()->has('user_email')) {
+            return redirect()->route('welcome')->with('error', 'Please authenticate first.');
+        }
+    
+        $userRole = $request->session()->get('user_role');
+        if ($userRole !== 'admin') {
+            return redirect()->route('participants.dashboard')->with('error', 'Access denied. Admin privileges required.');
+        }
+
         $activeRound = TastingRound::where('is_active', true)->first();
         $totalRounds = TastingRound::count();
         $totalReviews = Review::count();
@@ -42,13 +52,11 @@ class AdminController extends Controller
         }
 
         // Handle recent reviews - only load if reviews exist
-        $recentReviews = collect();
-        if ($totalReviews > 0) {
-            $recentReviews = Review::with(['snack', 'session.user'])
-                ->latest()
-                ->limit(10)
-                ->get();
-        }
+        $recentReviews = Review::with(['snack', 'tastingSession.user'])
+            ->whereHas('tastingSession.user') // Only get reviews that have a session with a user
+            ->latest()
+            ->take(4)
+            ->get();
 
         $roundStats = TastingRound::withCount(['tastingSessions as completed_sessions' => function($query) {
             $query->where('status', 'completed');

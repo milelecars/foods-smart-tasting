@@ -150,44 +150,81 @@ class TastingController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'round_id' => 'nullable|integer' // Make round_id optional
+            'round_id' => 'nullable|integer', // Make round_id optional
+            'role' => 'nullable|string|in:admin,participant' // Add role validation
         ]);
-
+    
         // Check if email is from milele.com domain
         if (!str_ends_with(strtolower($request->email), '@milele.com')) {
             return back()->with('error', 'Please use your @milele.com company email address.');
         }
-
+    
         // Check if user exists in database (authorized user)
         $user = User::where('email', $request->email)->first();
-
+    
         if (!$user) {
             return back()->with('error', 'You are not authorized to access the tasting portal. Please contact administrator.');
         }
-
+    
         // Store user email in session for dashboard access
         $request->session()->put('user_email', $user->email);
-
-        // Route based on user role
-        if ($user->isAdmin()) {
-            // Admin users go to admin dashboard
-            return redirect()->route('admin.dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
-        } else {
-            // Participant users go to participants dashboard
-            // Handle case when no round_id is provided (no active rounds)
-            if (!$request->round_id) {
-                return redirect()->route('participants.dashboard')
-                    ->with('info', 'Welcome! No active tasting rounds are currently available. Check back later or contact your administrator.');
-            }
-
-            $round = TastingRound::findOrFail($request->round_id);
-            
-            if (!$round->is_active) {
-                return back()->with('error', 'This tasting round is not currently active.');
-            }
-
-            return redirect()->route('participants.dashboard')->with('success', 'Welcome back, ' . $user->name . '!');
+        $request->session()->put('user_id', $user->id);
+    
+        // Check if user has multiple roles and no role was specified
+        if ($user->hasMultipleRoles() && !$request->filled('role')) {
+            // Set flag to show role selection modal
+            return redirect()->route('welcome')
+                ->with('role_selection_required', true)
+                ->with('user_email', $user->email);
         }
+    
+        // Determine the role to use
+        if ($user->hasMultipleRoles() && !$request->filled('role')) {
+            // Set flag to show role selection modal
+            return redirect()->route('welcome')
+                ->with('role_selection_required', true)
+                ->with('user_email', $user->email);
+        }
+        
+        // Determine the role to use
+        if ($request->filled('role')) {
+            // User explicitly chose a role from the modal
+            $selectedRole = $request->role;
+        } elseif ($user->hasMultipleRoles()) {
+            // Has multiple roles but shouldn't reach here (safety fallback)
+            $selectedRole = 'admin'; // Default to admin if they have both
+        } elseif ($user->isAdmin()) {
+            $selectedRole = 'admin';
+        } else {
+            $selectedRole = 'participant';
+        }
+        
+        // Store the selected role in session
+        $request->session()->put('user_role', $selectedRole);
+    
+        // Route based on selected role
+        if ($selectedRole === 'admin') {
+            // Admin users go to admin dashboard
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Welcome back, ' . $user->name . '!');
+        }
+
+        // Participant users go to participants dashboard
+        // Handle case when no round_id is provided (no active rounds)
+        if (!$request->round_id) {
+            return redirect()->route('participants.dashboard')
+                ->with('info', 'Welcome! No active tasting rounds are currently available. Check back later or contact your administrator.');
+        }
+
+        $round = TastingRound::findOrFail($request->round_id);
+
+        if (!$round->is_active) {
+            return redirect()->route('participants.dashboard')
+                ->with('error', 'This tasting round is not currently active.');
+        }
+
+        return redirect()->route('participants.dashboard')
+            ->with('success', 'Welcome back, ' . $user->name . '!');
     }
 
     public function showSession($sessionId)
@@ -238,7 +275,7 @@ class TastingController extends Controller
         $session = TastingSession::findOrFail($sessionId);
 
         // Check if review already exists for this snack in this session
-        $existingReview = Review::where('session_id', $session->id)
+        $existingReview = Review::where('tasting_session_id', $session->id)
             ->where('snack_id', $request->snack_id)
             ->first();
 
@@ -247,7 +284,7 @@ class TastingController extends Controller
         }
 
         Review::create([
-            'session_id' => $session->id,
+            'tasting_session_id' => $session->id,
             'snack_id' => $request->snack_id,
             'taste_rating' => $request->taste_rating,
             'texture_rating' => $request->texture_rating,

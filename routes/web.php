@@ -7,38 +7,62 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SnackController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SessionController;
+use Illuminate\Support\Facades\Route;
 
-// Public routes
+// Public routes (no auth required)
 Route::get('/', [TastingController::class, 'welcome'])->name('welcome');
+Route::get('/select-role', [TastingController::class, 'selectRole'])->name('select.role');
+Route::post('/set-role', [TastingController::class, 'setRole'])->name('set.role');
 
-// Participants dashboard
-Route::get('/dashboard', [TastingController::class, 'participantsDashboard'])->name('participants.dashboard');
+// Authentication route (handles email-based auth)
+Route::post('/tasting/start', [TastingController::class, 'startSession'])->name('tasting.start');
 
-// Tasting session routes
-Route::prefix('tasting')->group(function () {
-    Route::post('/start', [TastingController::class, 'startSession'])->name('tasting.start');
-    Route::post('/start-session', [TastingController::class, 'startTastingSession'])->name('tasting.start-session');
-    Route::get('/session/{sessionId}', [TastingController::class, 'showSession'])->name('tasting.session');
-    Route::post('/session/{sessionId}/review', [TastingController::class, 'submitReview'])->name('tasting.submit-review');
-    Route::get('/complete/{sessionId}', [TastingController::class, 'complete'])->name('tasting.complete');
-    Route::get('/session/{sessionId}/progress', [TastingController::class, 'sessionProgress'])->name('tasting.progress');
+// File storage access
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $path = storage_path('app/public/' . $folder . '/' . $filename);
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    $mimeType = mime_content_type($path);
+    return response()->file($path, [
+        'Content-Type' => $mimeType,
+    ]);
+})->where('filename', '.*');
+
+// Participant routes (protected by session check)
+Route::middleware(['web'])->group(function () {
+    // Participants dashboard
+    Route::get('/dashboard', [TastingController::class, 'participantsDashboard'])->name('participants.dashboard');
+
+    // Tasting session routes
+    Route::prefix('tasting')->group(function () {
+        Route::post('/start-session', [TastingController::class, 'startTastingSession'])->name('tasting.start-session');
+        Route::get('/session/{sessionId}', [TastingController::class, 'showSession'])->name('tasting.session');
+        Route::post('/session/{sessionId}/review', [TastingController::class, 'submitReview'])->name('tasting.submit-review');
+        Route::get('/complete/{sessionId}', [TastingController::class, 'complete'])->name('tasting.complete');
+        Route::get('/session/{sessionId}/progress', [TastingController::class, 'sessionProgress'])->name('tasting.progress');
+    });
 });
 
-// Admin routes
+// Admin routes (protected by admin role check)
 Route::prefix('admin')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/analytics', [AdminController::class, 'analytics'])->name('admin.analytics');
     Route::get('/export/{type}', [AdminController::class, 'exportData'])->name('admin.export');
     Route::get('/participants', [AdminController::class, 'participants'])->name('admin.participants');
-    
+
     // Resource routes
     Route::resource('categories', CategoryController::class)->names('admin.categories');
     Route::resource('snacks', SnackController::class)->names('admin.snacks');
     Route::resource('tasting-rounds', TastingRoundController::class)->names('admin.tasting-rounds');
-    Route::resource('reviews', ReviewController::class)->names('admin.reviews');
-    Route::resource('sessions', SessionController::class)->names('admin.sessions');
-    
+    Route::resource('reviews', ReviewController::class)
+        ->only(['index', 'show', 'destroy'])
+        ->names('admin.reviews');
+    Route::resource('sessions', SessionController::class)
+        ->only(['index', 'show', 'destroy'])
+        ->names('admin.sessions');
+
     // Additional routes
     Route::post('/tasting-rounds/{tastingRound}/activate', [TastingRoundController::class, 'activate'])->name('admin.tasting-rounds.activate');
     Route::get('/tasting-rounds/{tastingRound}/results', [TastingRoundController::class, 'results'])->name('admin.tasting-rounds.results');

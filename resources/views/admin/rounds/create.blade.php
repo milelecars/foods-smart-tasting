@@ -3,7 +3,7 @@
 @section('title', 'Create Tasting Round')
 
 @section('content')
-<div class="space-y-6">
+<div class="p-20 space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -57,54 +57,57 @@
                     <p class="mt-1 text-sm text-gray-500">Only one round can be active at a time</p>
                 </div>
 
-                <!-- Snacks Selection -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Select Snacks for This Round</label>
-                    
-                    <!-- Category Filter -->
-                    <div class="mb-4">
-                        <select id="category-filter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">All Categories</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <!-- Snacks Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
-                        @foreach($snacks as $index => $snack)
-                        <div class="snack-item border border-gray-200 rounded-lg p-3 hover:bg-gray-50" 
-                             data-category="{{ $snack->category_id }}">
-                            <div class="flex items-start space-x-3">
-                                <input type="checkbox" name="snack_ids[]" 
-                                       value="{{ $snack->id }}" id="snack_{{ $snack->id }}"
-                                       class="snack-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                <div class="flex-1">
-                                    <label for="snack_{{ $snack->id }}" class="text-sm font-medium text-gray-900 cursor-pointer">
-                                        {{ $snack->name }}
-                                    </label>
-                                    <p class="text-xs text-gray-500">{{ $snack->brand }}</p>
-                                    <p class="text-xs text-blue-600">{{ $snack->category->name }}</p>
-                                </div>
-                            </div>
-                            <div class="mt-2">
-                                <label class="block text-xs text-gray-500">Order:</label>
-                                <input type="number" name="snack_orders[{{ $snack->id }}]" 
-                                       min="1" value="{{ $loop->iteration }}"
-                                       class="snack-order mt-1 block w-full text-xs border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-                                       disabled>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                    @error('snacks')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    <div id="snacks-error" class="mt-1 text-sm text-red-600" style="display: none;">
-                        Please select at least one snack for this round.
-                    </div>
+<!-- Snacks Selection -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-3">Select Snacks for This Round</label>
+    
+    <!-- Category Filter -->
+    <div class="mb-4 flex items-center gap-4">
+        <select id="category-filter" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            <option value="">All Categories</option>
+            @foreach($categories as $category)
+            <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
+        </select>
+        
+        <!-- Select All Checkbox -->
+        <label class="flex items-center whitespace-nowrap">
+            <input type="checkbox" id="select-all-snacks" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <span class="ml-2 text-sm text-gray-700">Select All</span>
+        </label>
+    </div>
+    
+    <!-- Snacks Grid (4 columns) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
+        @foreach($snacks as $snack)
+        <div class="snack-item border border-gray-200 rounded-lg p-3 hover:bg-gray-50" 
+             data-category="{{ $snack->category_id }}">
+            <div class="flex items-start space-x-2">
+                <input type="checkbox" name="snack_ids[]" 
+                       value="{{ $snack->id }}" 
+                       id="snack_{{ $snack->id }}"
+                       class="snack-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <div class="flex-1 min-w-0">
+                    <label for="snack_{{ $snack->id }}" class="text-sm font-medium text-gray-900 cursor-pointer block truncate">
+                        {{ $snack->name }}
+                    </label>
+                    <p class="text-xs text-gray-500 truncate">{{ $snack->brand }}</p>
                 </div>
+            </div>
+        </div>
+        @endforeach
+        </div>
+        
+        @error('snacks')
+        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+        
+        <div id="snacks-error" class="mt-1 text-sm text-red-600" style="display: none;">
+            Please select at least one snack for this round.
+        </div>
+    </div>
+
+
             </div>
 
             <!-- Actions -->
@@ -114,7 +117,7 @@
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-milele-green hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-milele-green hover:bg-milele-green hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="fas fa-save mr-2"></i>Create Round
                 </button>
             </div>
@@ -165,6 +168,37 @@ document.addEventListener('DOMContentLoaded', function() {
         
         snacksError.style.display = 'none';
     });
+});
+</script>
+
+<script>
+// Select All functionality
+document.getElementById('select-all-snacks').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.snack-checkbox');
+    const visibleCheckboxes = Array.from(checkboxes).filter(cb => {
+        return cb.closest('.snack-item').style.display !== 'none';
+    });
+    
+    visibleCheckboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+
+// Category filter functionality
+document.getElementById('category-filter').addEventListener('change', function() {
+    const selectedCategory = this.value;
+    const snackItems = document.querySelectorAll('.snack-item');
+    
+    snackItems.forEach(item => {
+        if (selectedCategory === '' || item.dataset.category === selectedCategory) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Uncheck "Select All" when filter changes
+    document.getElementById('select-all-snacks').checked = false;
 });
 </script>
 @endsection

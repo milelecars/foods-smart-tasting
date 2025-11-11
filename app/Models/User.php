@@ -13,7 +13,20 @@ class User extends Model
 
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        $role = strtolower((string) $this->role);
+        return str_contains($role, 'admin');
+    }
+
+    public function isParticipant()
+    {
+        $role = strtolower((string) $this->role);
+        return str_contains($role, 'participant');
+    }
+
+    public function hasMultipleRoles()
+    {
+        $role = strtolower((string) $this->role);
+        return str_contains($role, 'admin') && str_contains($role, 'participant');
     }
 
     public function createdRounds()

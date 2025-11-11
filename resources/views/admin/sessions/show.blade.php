@@ -3,7 +3,7 @@
 @section('title', 'Session Details')
 
 @section('content')
-<div class="space-y-6">
+<div class="p-20 space-y-6">
     <!-- Header -->
     <div class="flex justify-between items-center">
         <div>
@@ -36,7 +36,7 @@
         <div class="p-6">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Left Column -->
-                <div class="space-y-6">
+                <div class="p-20 space-y-6">
                     <div>
                         <h4 class="text-lg font-medium text-gray-900 mb-4">Participant Details</h4>
                         <div class="flex items-center space-x-4">
@@ -73,7 +73,7 @@
                 </div>
 
                 <!-- Right Column -->
-                <div class="space-y-6">
+                <div class="p-20 space-y-6">
                     <div>
                         <h4 class="text-lg font-medium text-gray-900 mb-4">Session Status</h4>
                         <div class="space-y-4">

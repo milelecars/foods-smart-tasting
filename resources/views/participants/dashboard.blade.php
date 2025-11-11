@@ -4,7 +4,7 @@
 
 @section('content')
 <div class=" max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-    <div class="space-y-6">
+    <div class="p-20 space-y-6">
         <!-- Welcome Header -->
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex items-center justify-between">
@@ -77,7 +77,7 @@
             @if(isset($availableRounds) && $availableRounds->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach($availableRounds as $round)
-                        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="border border-gray-200 rounded-lg p-4 transition-shadow">
                             <h3 class="font-semibold text-gray-900 mb-2">{{ $round->name }}</h3>
                             <p class="text-sm text-gray-600 mb-3">{{ Str::limit($round->description, 100) }}</p>
                             
@@ -90,7 +90,7 @@
                                 @csrf
                                 <input type="hidden" name="email" value="{{ $user->email }}">
                                 <input type="hidden" name="round_id" value="{{ $round->id }}">
-                                <button type="submit" class="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors">
+                                <button type="submit" class="w-full bg-milele-green text-white py-2 px-4 rounded-lg hover:bg-milele-green hover:opacity-95 transition-colors">
                                     <i class="fas fa-play mr-1"></i> Start Tasting
                                 </button>
                             </form>
