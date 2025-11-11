@@ -62,7 +62,6 @@ Route::prefix('admin')->group(function () {
     Route::resource('sessions', SessionController::class)
         ->only(['index', 'show', 'destroy'])
         ->names('admin.sessions');
-
     // Additional routes
     Route::post('/tasting-rounds/{tastingRound}/activate', [TastingRoundController::class, 'activate'])->name('admin.tasting-rounds.activate');
     Route::get('/tasting-rounds/{tastingRound}/results', [TastingRoundController::class, 'results'])->name('admin.tasting-rounds.results');
