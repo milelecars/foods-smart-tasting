@@ -35,13 +35,10 @@
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900 mb-1">
-                            {{ $currentSnack->snack->name }}
+                        {{ $currentSnack->sequence_order }}. {{ $currentSnack->snack->name }}
                         </h2>
                         <p class="text-lg text-gray-600 mb-2">{{ $currentSnack->snack->brand }}</p>
                     </div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        #{{ $currentSnack->sequence_order }}
-                    </span>
                 </div>
 
                 @if($currentSnack->snack->description)
@@ -127,7 +124,11 @@
                     <div class="mt-8">
                         <button type="submit" 
                                 class="w-full bg-milele-green text-white py-3 px-4 rounded-lg font-medium hover:bg-milele-green hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                            Submit Review & Continue
+                            @if($progress['current'] < $progress['total'])
+                                Next
+                            @else
+                                Submit
+                            @endif
                         </button>
                     </div>
                 </form>
@@ -173,6 +174,22 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Validate all rating groups before allowing submit
+    const form = document.querySelector('form[action*="tasting.submit-review"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Check that each group has one selected value
+            const allRated = ratingGroups.every(groupName => {
+                return !!document.querySelector(`input[type="radio"][name="${groupName}"]:checked`);
+            });
+
+            if (!allRated) {
+                e.preventDefault();
+                alert('Please rate all attributes (taste, texture, appearance, overall) before continuing.');
+            }
+        });
+    }
 });
 </script>
 @endsection
