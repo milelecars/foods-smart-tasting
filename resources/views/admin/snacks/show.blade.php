@@ -201,7 +201,7 @@
                     @forelse($snack->reviews as $review)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ $review->session->user->email }}</div>
+                            <div class="text-sm font-medium text-gray-900">{{ $review->tastingSession->user->email }}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div class="flex text-yellow-400">

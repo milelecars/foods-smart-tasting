@@ -215,7 +215,7 @@
                                 {{ $result['snack']->name }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $review->session->user->email }}
+                                {{ $review->tastingSession->user->email }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <div class="flex text-yellow-400">

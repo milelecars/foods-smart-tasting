@@ -12,11 +12,11 @@ class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Review::with(['session.user', 'session.tastingRound', 'snack']);
+        $query = Review::with(['tastingSession.user', 'tastingSession.tastingRound', 'snack']);
         
         // Filter by round
         if ($request->has('round_id') && $request->round_id) {
-            $query->whereHas('session', function($q) use ($request) {
+            $query->whereHas('tastingSession', function($q) use ($request) {
                 $q->where('tasting_round_id', $request->round_id);
             });
         }
@@ -35,7 +35,7 @@ class ReviewController extends Controller
 
     public function show(Review $review)
     {
-        $review->load(['session.user', 'session.tastingRound', 'snack.category']);
+        $review->load(['tastingSession.user', 'tastingSession.tastingRound', 'snack.category']);
         
         return view('admin.reviews.show', compact('review'));
     }
@@ -50,13 +50,16 @@ class ReviewController extends Controller
 
     public function export(Request $request)
     {
-        $query = Review::with(['session.user', 'session.tastingRound', 'snack']);
+        $query = Review::with(['tastingSession.user', 'tastingSession.tastingRound', 'snack']);
         
         // Apply filters
         if ($request->has('round_id') && $request->round_id) {
-            $query->whereHas('session', function($q) use ($request) {
+            $query->whereHas('tastingSession', function($q) use ($request) {
                 $q->where('tasting_round_id', $request->round_id);
             });
+        }
+        if ($request->has('snack_id') && $request->snack_id) {
+            $query->where('snack_id', $request->snack_id);
         }
 
         $reviews = $query->get();
@@ -83,8 +86,8 @@ class ReviewController extends Controller
             foreach ($reviews as $review) {
                 fputcsv($file, [
                     $review->id,
-                    $review->session->tastingRound->name,
-                    $review->session->user->email,
+                    $review->tastingSession->tastingRound->name,
+                    $review->tastingSession->user->email,
                     $review->snack->name,
                     $review->snack->brand,
                     $review->taste_rating,

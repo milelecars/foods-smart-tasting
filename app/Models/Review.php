@@ -26,6 +26,12 @@ class Review extends Model
         return $this->belongsTo(TastingSession::class, 'tasting_session_id');
     }
 
+    // Alias for tastingSession for convenience
+    public function session()
+    {
+        return $this->tastingSession();
+    }
+
     public function snack()
     {
         return $this->belongsTo(Snack::class);
@@ -33,12 +39,26 @@ class Review extends Model
 
     public function user()
     {
-        return $this->session->user();
+        return $this->hasOneThrough(
+            User::class,
+            TastingSession::class,
+            'id', // Foreign key on tasting_sessions table
+            'id', // Foreign key on users table
+            'tasting_session_id', // Local key on reviews table
+            'user_id' // Local key on tasting_sessions table
+        );
     }
 
     public function tastingRound()
     {
-        return $this->session->tastingRound();
+        return $this->hasOneThrough(
+            TastingRound::class,
+            TastingSession::class,
+            'id', // Foreign key on tasting_sessions table
+            'id', // Foreign key on tasting_rounds table
+            'tasting_session_id', // Local key on reviews table
+            'tasting_round_id' // Local key on tasting_sessions table
+        );
     }
 
     public function getAverageAttribute()

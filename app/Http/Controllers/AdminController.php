@@ -112,7 +112,11 @@ class AdminController extends Controller
         ->groupBy('year', 'month')
         ->orderBy('year')
         ->orderBy('month')
-        ->get();
+        ->get()
+        ->map(function ($item) {
+            $item->formatted_date = \Carbon\Carbon::create($item->year, $item->month, 1)->format('M Y');
+            return $item;
+        });
     
         $ratingBreakdown = Review::select(
             'taste_rating',
@@ -136,7 +140,7 @@ class AdminController extends Controller
             'Content-Disposition' => "attachment; filename=\"$filename\""
         ];
 
-        $reviews = Review::with(['snack', 'session.user', 'session.tastingRound'])
+        $reviews = Review::with(['snack', 'tastingSession.user', 'tastingSession.tastingRound'])
             ->get();
 
         $callback = function() use ($reviews) {
@@ -152,8 +156,8 @@ class AdminController extends Controller
 
             foreach ($reviews as $review) {
                 fputcsv($file, [
-                    $review->session->tastingRound->name,
-                    $review->session->user->email,
+                    $review->tastingSession->tastingRound->name,
+                    $review->tastingSession->user->email,
                     $review->snack->name,
                     $review->snack->brand,
                     $review->taste_rating,
@@ -173,7 +177,8 @@ class AdminController extends Controller
 
     public function participants()
     {
-        $participants = User::where('role', 'participant')
+        $participants = User::where('role', 'admin')
+            ->orWhere('role', 'admin / participant')
             ->withCount(['tastingSessions as completed_sessions' => function($query) {
                 $query->where('status', 'completed');
             }])

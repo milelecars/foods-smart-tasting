@@ -163,7 +163,7 @@
     @endif
 
     <!-- Export Section -->
-    <div class="bg-white rounded-lg shadow">
+    <!-- <div class="bg-white rounded-lg shadow">
         <div class="px-6 py-4 border-b border-gray-200">
             <h3 class="text-lg font-medium text-gray-900">Data Export</h3>
         </div>
@@ -179,23 +179,23 @@
                 </a>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Monthly Reviews Trend -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <!-- <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Monthly Reviews Trend</h3>
         <div class="h-64">
             <canvas id="monthlyReviewsChart"></canvas>
         </div>
-    </div>
+    </div> -->
 
     <!-- Rating Breakdown -->
-    <div class="bg-white rounded-lg shadow p-6">
+    <!-- <div class="bg-white rounded-lg shadow p-6">
         <h3 class="text-lg font-medium text-gray-900 mb-4">Rating Breakdown</h3>
         <div class="h-64">
             <canvas id="ratingBreakdownChart"></canvas>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <script>
@@ -269,60 +269,60 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Monthly Reviews Trend Chart
-    const monthlyCtx = document.getElementById('monthlyReviewsChart').getContext('2d');
-    new Chart(monthlyCtx, {
-        type: 'line',
-        data: {
-            labels: @json($monthlyReviews->map(fn($item) => date('M Y', mktime(0,0,0,$item->month,1,$item->year)))),
-            datasets: [{
-                label: 'Reviews per Month',
-                data: @json($monthlyReviews->pluck('count')),
-                borderColor: 'rgba(139, 92, 246, 1)',
-                backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+   // Monthly Reviews Trend Chart
+    // const monthlyCtx = document.getElementById('monthlyReviewsChart').getContext('2d');
+    // new Chart(monthlyCtx, {
+    //     type: 'line',
+    //     data: {
+    //         labels: @json($monthlyReviews->pluck('formatted_date')),
+    //         datasets: [{
+    //             label: 'Reviews per Month',
+    //             data: @json($monthlyReviews->pluck('count')),
+    //             borderColor: 'rgba(139, 92, 246, 1)',
+    //             backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    //             tension: 0.4,
+    //             fill: true
+    //         }]
+    //     },
+    //     options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false
+    //     }
+    // });
 
     // Rating Breakdown Chart
-    const breakdownCtx = document.getElementById('ratingBreakdownChart').getContext('2d');
-    new Chart(breakdownCtx, {
-        type: 'radar',
-        data: {
-            labels: ['Taste', 'Texture', 'Appearance', 'Overall'],
-            datasets: [{
-                label: 'Average Ratings',
-                data: [
-                    {{ $ratingBreakdown->avg('taste_rating') }},
-                    {{ $ratingBreakdown->avg('texture_rating') }},
-                    {{ $ratingBreakdown->avg('appearance_rating') }},
-                    {{ $ratingBreakdown->avg('overall_rating') }}
-                ],
-                backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                borderColor: 'rgba(34, 197, 94, 1)',
-                pointBackgroundColor: 'rgba(34, 197, 94, 1)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    beginAtZero: true,
-                    max: 5,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
+    // const breakdownCtx = document.getElementById('ratingBreakdownChart').getContext('2d');
+    // new Chart(breakdownCtx, {
+    //     type: 'radar',
+    //     data: {
+    //         labels: ['Taste', 'Texture', 'Appearance', 'Overall'],
+    //         datasets: [{
+    //             label: 'Average Ratings',
+    //             data: [
+    //                 {{ $ratingBreakdown->avg('taste_rating') }},
+    //                 {{ $ratingBreakdown->avg('texture_rating') }},
+    //                 {{ $ratingBreakdown->avg('appearance_rating') }},
+    //                 {{ $ratingBreakdown->avg('overall_rating') }}
+    //             ],
+    //             backgroundColor: 'rgba(34, 197, 94, 0.2)',
+    //             borderColor: 'rgba(34, 197, 94, 1)',
+    //             pointBackgroundColor: 'rgba(34, 197, 94, 1)'
+    //         }]
+    //     },
+    //     options: {
+    //         responsive: true,
+    //         maintainAspectRatio: false,
+    //         scales: {
+    //             r: {
+    //                 beginAtZero: true,
+    //                 max: 5,
+    //                 ticks: {
+    //                     stepSize: 1
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 });
 </script>
 @endsection

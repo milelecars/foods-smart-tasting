@@ -14,7 +14,7 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-lg shadow p-6">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
                 <label for="round_id" class="block text-sm font-medium text-gray-700">Filter by Round</label>
                 <select name="round_id" id="round_id" 
@@ -65,6 +65,13 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($sessions as $session)
+                    @php
+                        $stats = $sessionStats[$session->id] ?? [
+                            'total_snacks' => 0,
+                            'completed_reviews' => 0,
+                            'progress_percentage' => 0
+                        ];
+                    @endphp
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">

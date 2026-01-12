@@ -12,7 +12,11 @@ class SessionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TastingSession::with(['user', 'tastingRound', 'reviews']);
+        $query = TastingSession::with([
+            'user', 
+            'tastingRound.roundSnacks', 
+            'reviews'
+        ]);
         
         // Filter by round
         if ($request->has('round_id') && $request->round_id) {
@@ -27,7 +31,23 @@ class SessionController extends Controller
         $sessions = $query->latest()->paginate(20);
         $rounds = TastingRound::all();
 
-        return view('admin.sessions.index', compact('sessions', 'rounds'));
+        // Precompute stats per session to avoid undefined variables in the view
+        $sessionStats = $sessions->mapWithKeys(function ($session) {
+            $totalSnacks = $session->tastingRound->roundSnacks->count();
+            $completedReviews = $session->reviews->count();
+
+            return [
+                $session->id => [
+                    'total_snacks' => $totalSnacks,
+                    'completed_reviews' => $completedReviews,
+                    'progress_percentage' => $totalSnacks > 0
+                        ? round(($completedReviews / $totalSnacks) * 100, 1)
+                        : 0,
+                ]
+            ];
+        });
+
+        return view('admin.sessions.index', compact('sessions', 'rounds', 'sessionStats'));
     }
 
     public function show(Session $session)
