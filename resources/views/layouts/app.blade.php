@@ -30,6 +30,11 @@
                                 <i class="fas fa-tachometer-alt mr-1.5"></i>Dashboard
                             </a>
                         @endif
+                        @if($currentUser && $currentRole === 'admin')
+                            <a href="{{ route('admin.access-control.index') }}" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md transition-colors">
+                                <i class="fas fa-user-shield mr-1.5"></i>Access Control
+                            </a>
+                        @endif
                         <a href="{{ url('/') }}" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md transition-colors">
                             <i class="fas fa-sign-out-alt mr-1.5"></i>Logout
                         </a>

@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SnackController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\AccessControlController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no auth required)
@@ -67,4 +68,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/tasting-rounds/{tastingRound}/results', [TastingRoundController::class, 'results'])->name('admin.tasting-rounds.results');
     Route::post('/sessions/{session}/force-complete', [SessionController::class, 'forceComplete'])->name('admin.sessions.force-complete');
     Route::get('/reviews/export', [ReviewController::class, 'export'])->name('admin.reviews.export');
+    Route::get('/access-control', [AccessControlController::class, 'index'])->name('admin.access-control.index');
+    Route::post('/access-control', [AccessControlController::class, 'store'])->name('admin.access-control.store');
+    Route::put('/access-control/{user}', [AccessControlController::class, 'update'])->name('admin.access-control.update');
+    Route::delete('/access-control/{user}', [AccessControlController::class, 'destroy'])->name('admin.access-control.destroy');
 });
